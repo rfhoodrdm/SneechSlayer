@@ -1,0 +1,109 @@
+# Description
+This file describes the graphical part of the user interface for the game. Rules and game flow will appear in a separate epic. This document is intended to describe the different pieces in the user interface.
+
+## Conventions:
+- Coordinates when given are (column, row) or (width, height)
+    - E.g. (0,2) means column 0, row 2.
+- For generated graphics, I'm looking mostly for a flavor that looks at home in the 80s dungeons and dragons game book, or maybe an NES game manual.
+    - Painted
+    - Full color
+    - Sword and sorcery flavored.
+    - Sizes should perhaps be slightly larger than necessary, and can be scaled down for painting to the component.
+        - Assume the window resolution is 1920 by 1080.
+        - Backgrounds fill their respective panel.
+       - Sprites, icons, and dice preserve their aspect ratio and fit within their allocated area.
+- Sprites should have transparent backgrounds.
+- Use PNG for image format unless otherwise specified.
+- For now, unless there is another specified state, assume all players start at Dungeon level 1, in the pit space, with EXP level 0.
+- Use the Java Swing toolkit for Gui components.
+- If a component is designated to be disabled, then standard Swing disabled styling works.
+- For now, standard swing dialogs are fine if we must prompt the user for more info.
+- Typefaces to use:
+    - Cinzel Bold for the title, dungeon headings, round display, and major buttons.
+    - Alegreya Regular/Bold for instructions, menu-related text, bestiary values, and other smaller labels.
+    - Fonts should go in the assets/font/ folder.
+    - You may specify Java Serif font as the fallback if a font fails to load.
+
+## User Interface
+- The main game window should use Windowed Full Screen mode on startup.
+- The title of the window should be "Sneech Slayer" and then the version of the game. Use Maven project version for this.
+- There is one game screen so far: the main game screen.
+- You may use insets as spacing to separate components to make the gui look nice.
+- The main game screen can be plotted on a 3-wide by 2-high grid.
+    - Cell 0,0 is Dungeon Level 3.
+    - Cell 1,0 is Dungeon Level 2.
+    - Cell 0,1 is the Sneech Lair.
+    - Cell 1,1 is Dungeon Level 1. 
+    - Cell 2,0 and 2,1 are combined to display the Control Panel and Monster Bestiary
+- Dungeon levels are either normal dungeon levels or the Sneech lair.
+    - See game terms as for what player spaces may be occupied.
+    - Dungeon levels should be of uniform size in appearance.
+    - Each dungeon cell has a graphic that is drawn onto the entire background. 
+        - For Dungeon level 1, it is the Castle Ruins. This level's theme should favor blue in color.
+        - For Dungeon level 2, it is the bramble patch. This level's theme should favor green in color.
+        - For dungeon Level 3, it is the swamp. This level's theme should favor amber in color.
+        - For dungeon level 4, it is the Sneech lair. The Sneech's lair should be a cave, with the Sneech snarling in the center.
+    - You should generate the background graphics for each dungeon level if they don't exist. Put them into the assets/image/background/ folder.
+    - The spaces that a player may be occupied are spaced more or less evenly around the perimeter of the dungeon level, except for the pit, which is in the center.
+    - Each space has an index corresponding to its place along the dungeon level path.
+    - For normal dungeon levels, the monster index marks the space. 
+        - Remember, the pit has no monster index.
+    - For the Sneech lair, the Sneech's power level on that space marks the space.
+        - Remember, the pit has no power level.
+    - Each pit should be labeled with "Start"
+    - Each space has a border that can be highlighted depending on whether it is the currently active/occupied space by the turn player.
+        - Gray if not selected.
+        - Colored according to the dungeon theme color if active.
+- The Control panel has several components, stacked vertically.
+    - The control panel has its own background. Perhaps a dim, neutral colored dungeon corridor. Make sure it doesn't overpower the sprites when painted.
+        - The background should span the entire control panel from top to bottom.
+        - You should generate this if it is missing. Place it in the assets/image/background/ folder.
+    - 1: Round display:
+        - Label with "Round: " and then the round number.
+    - 2: Monster gallery. This displays monster entries for the monsters that may be encountered in the normal dungeon levels.
+        - There are two rows of monster entries, containing three entries each. 
+        - Monster entries can be split up into 3 by 3 cells, themselves.
+        - The four cells at the upper left, 0,0, 0,1, 1,0, and 1,1 are combined to show the sprite of the monster.
+            - You should generate sprites appropriate for the monster if they don't exist. Put them in the assets/image/sprite folder.
+            - Cell 2,0 is the EXP awarded on a win. Display as "+<number> EXP"
+            - Cell 2,1 is the EXP forfeited on a loss. Display as "-<number> EXP"
+            - Cell 0,2 is the monster power on Dungeon level 1. Color code this according to the dungeon level.
+            - Cell 1,2 is the monster power on Dungeon level 2. Color code this according to the dungeon level.
+            - Cell 2,2 is the monster power on Dungeon level 3. Color code this according to the dungeon level.
+        - Each cell should have a border, which can indicate if a player is fighting a monster.
+            - Normal border is gray, indicating not selected.
+            - Border when a monster is encountered can be Orange or red.
+    - 3: The EXP gauge. 
+        - Each player has a pip corresponding to their color which displays their current EXP total.
+        - EXP is displayed numerically from 0 to 5, left to right.
+        - If multiple players have the same exp value, then you can stack them in a waterfall manner. Turn player should be closest.
+    - 4: The Dice pit. 
+        - Has enough room to display the surfaces of two dice sprites.
+        - You should generate the sprites for each surface of the dice pips, from 1 to 6, if they don't exist. Place these into the assets/image/sprite folder.
+    - 5: Move directions
+        - A radio button set. Is consulted whenever a player moves. Possible selections are CLOCKWISE and COUNTER CLOCKWISE.
+        - Have icons that are sprites of curved arrows pointing in the corresponding direction.
+        - You should generate the sprites for each direction if they do not exist. Place these into the assets/image/icon folder.
+    - 6: Combat choice buttons. 
+        - Two options: Fight or Run
+        - These are consulted when the player encounters a monster, or lands on a Sneech lair power level space.
+    - 7: Status indicator. Contains current turn indicator and a brief instruction label.
+        - Current player indicator: Should basically be a label that says "Current Player:" and then an icon with the player pip of the current turn player.
+        - Brief instruction: A label with space enough for a bit of text like "Choose direction" or "Fight or Run?"
+            - Initially set to "Choose New Game to Start"
+- There should also be a menu system in the game window.
+    - Menu: Game
+        - Option: New Game
+        - Option: Exit
+    - Menu: Settings
+        - Checkbox menu item: Music
+        - Checkbox menu item: Sound Effects 
+- We will allow users to specify the number of players using a dialog box on game reset/new game, allowing them to input a number from 2 to 4.
+    - The game rules and turn flow will go over when this should be displayed.
+- A separate dialog box will allow the players by number to pick their choice of player color that has not been selected yet.
+    - The game rules and turn flow will go over when this should be displayed.
+- Player tokens can be circular pips, colored according to their player color.
+    - These can be used for player position as well as EXP total on the EXP gauge.
+    - If two or more players occupy the same space, then you may overlap them.
+        - A waterfall stack of pips is appropriate, with the current turn player shown on top of the stack, which is closest to the user.
+        

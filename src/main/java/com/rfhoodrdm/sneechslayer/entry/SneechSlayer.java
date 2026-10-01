@@ -34,6 +34,8 @@ public class SneechSlayer implements ApplicationRunner {
 			log.error("The application could not load a required asset", exception);
 			System.exit(1);
 		}
+		
+		//show the gui.
 	}
 
 }
