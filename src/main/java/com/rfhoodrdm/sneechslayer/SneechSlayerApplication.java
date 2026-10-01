@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SneechSlayerApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("java.awt.headless", "false");
 		SpringApplication.run(SneechSlayerApplication.class, args);
+		
 	}
 
 }
