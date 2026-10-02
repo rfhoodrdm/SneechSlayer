@@ -14,7 +14,7 @@ This file describes the graphical part of the user interface for the game. Rules
        - Sprites, icons, and dice preserve their aspect ratio and fit within their allocated area.
 - Sprites should have transparent backgrounds.
 - Use PNG for image format unless otherwise specified.
-- For now, unless there is another specified state, assume all players start at Dungeon level 1, in the pit space, with EXP level 0.
+- For now, unless there is another specified state, assume all players start at Dungeon level 1, in the Start space, with EXP level 0.
 - Use the Java Swing toolkit for Gui components.
 - If a component is designated to be disabled, then standard Swing disabled styling works.
 - For now, standard swing dialogs are fine if we must prompt the user for more info.
@@ -44,13 +44,12 @@ This file describes the graphical part of the user interface for the game. Rules
         - For dungeon Level 3, it is the swamp. This level's theme should favor amber in color.
         - For dungeon level 4, it is the Sneech lair. The Sneech's lair should be a cave, with the Sneech snarling in the center.
     - You should generate the background graphics for each dungeon level if they don't exist. Put them into the assets/image/background/ folder.
-    - The spaces that a player may be occupied are spaced more or less evenly around the perimeter of the dungeon level, except for the pit, which is in the center.
+    - The spaces that a player may be occupied are spaced more or less evenly around the perimeter of the dungeon level, except for the Start Space, which is in the center.
     - Each space has an index corresponding to its place along the dungeon level path.
     - For normal dungeon levels, the monster index marks the space. 
-        - Remember, the pit has no monster index.
+        - Remember, the Start Space has no monster index.
     - For the Sneech lair, the Sneech's power level on that space marks the space.
-        - Remember, the pit has no power level.
-    - Each pit should be labeled with "Start"
+        - Remember, the Start Space has no power level.
     - Each space has a border that can be highlighted depending on whether it is the currently active/occupied space by the turn player.
         - Gray if not selected.
         - Colored according to the dungeon theme color if active.
@@ -84,6 +83,7 @@ This file describes the graphical part of the user interface for the game. Rules
         - A radio button set. Is consulted whenever a player moves. Possible selections are CLOCKWISE and COUNTER CLOCKWISE.
         - Have icons that are sprites of curved arrows pointing in the corresponding direction.
         - You should generate the sprites for each direction if they do not exist. Place these into the assets/image/icon folder.
+        - There is also a Move button. Use the Right Arrow sprite for this.
     - 6: Combat choice buttons. 
         - Two options: Fight or Run
         - These are consulted when the player encounters a monster, or lands on a Sneech lair power level space.
@@ -107,3 +107,14 @@ This file describes the graphical part of the user interface for the game. Rules
     - If two or more players occupy the same space, then you may overlap them.
         - A waterfall stack of pips is appropriate, with the current turn player shown on top of the stack, which is closest to the user.
         
+## Background Music:
+- On application startup, play background_music.aif continuously 
+- When Menu Settings -> Music is enabled by the user, play background_music.aif continuously if it is not already playing.
+- When Menu Settings -> Music is disabled by the user, stop playing background_music.aif
+- Selecting a new game does not alter this Menu setting.
+
+## Sound Effects
+- When a sound effect is indicated to be played, check the Menu Settings -> Sound Effects state.
+    - If Sound Effects are enabled, play the sound.
+    - If Sound Effects are disabled, do not play the sound.
+- Selecting a new game does not alter this Menu setting.

@@ -11,8 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rfhoodrdm.sneechslayer.state.DungeonLevel;
+import com.rfhoodrdm.sneechslayer.state.DungeonState;
+import com.rfhoodrdm.sneechslayer.state.MonsterSpace;
 import com.rfhoodrdm.sneechslayer.state.MonsterType;
 import com.rfhoodrdm.sneechslayer.state.PlayerColor;
+import com.rfhoodrdm.sneechslayer.state.PlayerState;
+import com.rfhoodrdm.sneechslayer.state.SneechSpace;
 
 /**
  * Paints a dungeon background, its path spaces, and player tokens.
@@ -29,6 +33,9 @@ final class DungeonPanel extends BackgroundPanel {
 	private final DungeonLevel dungeonLevel;
 	private final Color themeColor;
 	private List<PlayerColor> pitPlayers = List.of();
+	private List<PlayerState> players = List.of();
+	private DungeonState dungeonState;
+	private int highlightedPosition = -1;
 
 	DungeonPanel(DungeonLevel dungeonLevel, BufferedImage background, Color themeColor) {
 		super(background);
@@ -38,6 +45,16 @@ final class DungeonPanel extends BackgroundPanel {
 
 	void setPitPlayers(List<PlayerColor> players) {
 		pitPlayers = List.copyOf(players);
+		repaint();
+	}
+
+	void setGameView(DungeonState dungeonState, List<PlayerState> allPlayers, PlayerState activePlayer) {
+		this.dungeonState = dungeonState;
+		players = allPlayers.stream().filter(player -> player.dungeonLevel() == dungeonLevel).toList();
+		pitPlayers = players.stream().filter(player -> player.position() == PlayerState.PIT_POSITION)
+				.map(PlayerState::color).toList();
+		highlightedPosition = activePlayer != null && activePlayer.dungeonLevel() == dungeonLevel
+				? activePlayer.position() : -1;
 		repaint();
 	}
 
@@ -80,7 +97,7 @@ final class DungeonPanel extends BackgroundPanel {
 		graphics.setColor(new Color(15, 15, 15, 190));
 		graphics.fillOval(x, y, diameter, diameter);
 		graphics.setStroke(new BasicStroke(Math.max(2, diameter / 18f)));
-		graphics.setColor(Color.GRAY);
+		graphics.setColor(highlightedPosition == index + 1 ? themeColor : Color.GRAY);
 		graphics.drawOval(x, y, diameter, diameter);
 
 		String marker = markerAt(index);
@@ -94,9 +111,24 @@ final class DungeonPanel extends BackgroundPanel {
 		graphics.setFont(GuiTheme.boldText(Math.max(10, diameter / 5f)));
 		graphics.setColor(themeColor);
 		graphics.drawString(Integer.toString(index + 1), x + 4, y + diameter - 5);
+
+		List<PlayerState> spacePlayers = players.stream()
+				.filter(player -> player.position() == index + 1).toList();
+		for (int playerIndex = spacePlayers.size() - 1; playerIndex >= 0; playerIndex--) {
+			PlayerState player = spacePlayers.get(playerIndex);
+			int offset = (spacePlayers.size() - 1 - playerIndex) * 6;
+			new PipIcon(player.color(), Math.max(18, diameter / 3)).paintIcon(this, graphics,
+					centerX - diameter / 5 + offset, centerY - diameter / 5 + offset);
+		}
 	}
 
 	private String markerAt(int index) {
+		if (dungeonState != null) {
+			if (dungeonState.spaceAt(index + 1) instanceof MonsterSpace monsterSpace) {
+				return Character.toString(monsterSpace.monsterType().getIndex());
+			}
+			return Integer.toString(((SneechSpace) dungeonState.spaceAt(index + 1)).power());
+		}
 		if (dungeonLevel == DungeonLevel.SNEECH_LAIR) {
 			return Integer.toString(dungeonLevel.getSneechPowers().get(index));
 		}
@@ -111,7 +143,7 @@ final class DungeonPanel extends BackgroundPanel {
 		graphics.setColor(new Color(0, 0, 0, 205));
 		graphics.fillOval(x, y, diameter, diameter);
 		graphics.setStroke(new BasicStroke(3f));
-		graphics.setColor(themeColor);
+		graphics.setColor(highlightedPosition == PlayerState.PIT_POSITION ? themeColor : Color.GRAY);
 		graphics.drawOval(x, y, diameter, diameter);
 		graphics.setFont(GuiTheme.boldText(Math.max(11, diameter / 5f)));
 		graphics.setColor(GuiTheme.PARCHMENT);

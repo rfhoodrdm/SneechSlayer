@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import com.rfhoodrdm.sneechslayer.state.PlayerColor;
+import com.rfhoodrdm.sneechslayer.state.PlayerState;
 
 /**
  * Displays the zero-to-five experience scale and player pips.
@@ -19,16 +20,18 @@ final class ExperienceGauge extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<PlayerColor> players = List.of(PlayerColor.RED, PlayerColor.BLUE,
-			PlayerColor.GREEN, PlayerColor.YELLOW);
+	private List<PlayerState> players = List.of(PlayerColor.RED, PlayerColor.BLUE,
+			PlayerColor.GREEN, PlayerColor.YELLOW).stream().map(PlayerState::initial).toList();
+	private PlayerColor currentPlayer;
 
 	ExperienceGauge() {
 		setOpaque(false);
 		setPreferredSize(new Dimension(420, 78));
 	}
 
-	void setPlayers(List<PlayerColor> players) {
+	void setPlayers(List<PlayerState> players, PlayerColor currentPlayer) {
 		this.players = List.copyOf(players);
+		this.currentPlayer = currentPlayer;
 		repaint();
 	}
 
@@ -56,9 +59,14 @@ final class ExperienceGauge extends JPanel {
 			graphics2d.drawString(label, x - metrics.stringWidth(label) / 2, baseline);
 		}
 
-		for (int index = players.size() - 1; index >= 0; index--) {
-			PipIcon pip = new PipIcon(players.get(index), 22);
-			pip.paintIcon(this, graphics2d, margin - 11 + index * 7, 8 + index * 4);
+		List<PlayerState> ordered = new java.util.ArrayList<>(players);
+		ordered.sort(java.util.Comparator.comparing(player -> player.color() == currentPlayer));
+		int[] stacks = new int[6];
+		for (PlayerState player : ordered) {
+			int stack = stacks[player.experience()]++;
+			int x = margin + usableWidth * player.experience() / 5;
+			PipIcon pip = new PipIcon(player.color(), 22);
+			pip.paintIcon(this, graphics2d, x - 11 + stack * 6, 8 + stack * 4);
 		}
 		graphics2d.dispose();
 	}
