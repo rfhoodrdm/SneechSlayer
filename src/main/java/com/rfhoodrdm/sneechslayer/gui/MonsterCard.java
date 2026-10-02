@@ -22,7 +22,10 @@ final class MonsterCard extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	private final MonsterType monsterType;
+
 	MonsterCard(MonsterType monsterType, BufferedImage sprite) {
+		this.monsterType = monsterType;
 		setLayout(new GridBagLayout());
 		setOpaque(true);
 		setBackground(new Color(15, 14, 13, 215));
@@ -41,6 +44,19 @@ final class MonsterCard extends JPanel {
 				GuiTheme.LEVEL_TWO);
 		addValue(Integer.toString(monsterType.powerOn(DungeonLevel.SWAMP_BOG)), 2, 2,
 				GuiTheme.LEVEL_THREE);
+	}
+
+	MonsterType getMonsterType() {
+		return monsterType;
+	}
+
+	void setEncountered(boolean encountered) {
+		TitledBorder title = BorderFactory.createTitledBorder(
+				BorderFactory.createLineBorder(encountered ? new Color(230, 80, 35) : Color.GRAY,
+						encountered ? 4 : 2), monsterType.getDisplayName());
+		title.setTitleColor(GuiTheme.PARCHMENT);
+		title.setTitleFont(GuiTheme.boldText(15f));
+		setBorder(title);
 	}
 
 	private void addSprite(BufferedImage sprite) {

@@ -25,13 +25,13 @@ This document contains definitions for various objects and terms in the game.
     - Multiple players are allowed to occupy the same position at the same time with no consequence.
     - Players do not fight each other.
     - Each level starts at position 0, the center.
-        - The pit always leads to space 1, no matter if the player goes left or right.
-        - Moving out of the pit takes a movement point.
+        - The Start space always leads to space 1, no matter if the player goes clockwise or counter-clockwise.
+        - Moving out of the Start space takes a movement point.
     - The Path for that level consists of 9 spaces, arranged around the perimeter of the level.
         - The Path spaces are indexed from 1 to 9.
-        - If a player would move up from 9, then they loop around to 1.
-        - If a player would move down from 1, then they loop around to 9.
-        - A player may not move onto the pit (space 0).
+        - If a player would move clockwise from 9, then they loop around to 1.
+        - If a player would move counter-clockwise from 1, then they loop around to 9.
+        - A player may not move onto the Start space (space 0).
     - For normal dungeon levels, the spaces are marked with a monster index. The index determines what monster the player encounters when landing on that space.
         - Dungeon level 1 has monster indexes: A, A, B, B, C, C, D, E, F
         - Dungeon level 2 has monster indexes: A, B, B, C, C, D, D, E, F

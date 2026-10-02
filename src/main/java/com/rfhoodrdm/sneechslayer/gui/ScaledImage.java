@@ -15,12 +15,17 @@ final class ScaledImage extends JComponent {
 
 	private static final long serialVersionUID = 1L;
 
-	private final BufferedImage image;
+	private BufferedImage image;
 
 	ScaledImage(BufferedImage image, int preferredWidth, int preferredHeight) {
 		this.image = image;
 		setOpaque(false);
 		setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+	}
+
+	void setImage(BufferedImage image) {
+		this.image = image;
+		repaint();
 	}
 
 	@Override
